@@ -66,7 +66,7 @@ public class ContaService {
 
     /*@ public normal_behavior
       @   requires numeroConta != null && numeroConta.length() > 0;
-      @   requires contas.containsKey(numeroConta);
+      @   requires contas.get(numeroConta) != null;
       @   assignable \nothing;
       @   ensures \result >= 0;
       @ also

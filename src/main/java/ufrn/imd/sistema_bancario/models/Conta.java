@@ -72,6 +72,12 @@ public class Conta {
         this.numero = numero;
     }
 
+
+    /*@ public normal_behavior
+      @   assignable \nothing;
+      @   ensures \result >= 0;
+      @   ensures \result == saldo;
+      @*/
     //@ spec_pure
     public double getSaldo() {
         return saldo;
