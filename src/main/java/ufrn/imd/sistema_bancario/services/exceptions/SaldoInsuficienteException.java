@@ -6,6 +6,9 @@ public class SaldoInsuficienteException extends SistemaBancarioBaseException {
     private final String numeroConta;
 
 
+    /*@ public normal_behavior
+     @   assignable \nothing;
+     @*/
     //@ pure
     public SaldoInsuficienteException(String numeroConta) {
         this.numeroConta = numeroConta;

@@ -74,7 +74,7 @@ public class ContaService {
       @   ensures \result >= 0;
       @ also
       @ public exceptional_behavior
-      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
+      @   requires numeroConta == null || numeroConta.length() == 0 || contas.get(numeroConta) == null;
       @   assignable \nothing;
       @   signals_only ContaNaoEncontradaException;
       @*/
@@ -97,7 +97,7 @@ public class ContaService {
       @ also
       @ public exceptional_behavior
       @   requires valor > 0;
-      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
+      @   requires numeroConta == null || numeroConta.length() == 0 || contas.get(numeroConta) == null;
       @   assignable \nothing;
       @   signals_only ContaNaoEncontradaException;
       @*/
@@ -110,7 +110,21 @@ public class ContaService {
         return conta;
     }
 
-    /*@ public exceptional_behavior
+
+
+  /*@ public normal_behavior
+  @   requires numeroConta != null;
+  @   requires numeroConta.length() > 0;
+  @   requires valor > 0;
+  @   requires contas.containsKey(numeroConta);
+  @   requires contas.get(numeroConta) != null;
+  @   requires contas.get(numeroConta).getSaldo() >= valor;
+  @   assignable \everything;
+  @   ensures \result != null;
+  @   ensures \result == contas.get(numeroConta);
+  @
+  @ also
+  @  public exceptional_behavior
   @   requires valor <= 0;
   @   assignable \nothing;
   @   signals_only ValorInvalidoException;
@@ -119,7 +133,7 @@ public class ContaService {
   @   requires valor > 0;
   @   requires numeroConta == null
   @         || numeroConta.length() == 0
-  @         || !contas.containsKey(numeroConta);
+  @         || contas.get(numeroConta) == null;
   @   assignable \nothing;
   @   signals_only ContaNaoEncontradaException;
   @ also
@@ -128,6 +142,7 @@ public class ContaService {
   @   requires numeroConta != null;
   @   requires numeroConta.length() > 0;
   @   requires contas.containsKey(numeroConta);
+  @   requires contas.get(numeroConta) != null;
   @   requires contas.get(numeroConta).getSaldo() < valor;
   @   assignable \nothing;
   @   signals_only SaldoInsuficienteException;
@@ -144,9 +159,12 @@ public class ContaService {
 
     /*@ public normal_behavior
       @   requires numeroContaOrigem != null && numeroContaDestino != null;
-      @   requires contas.containsKey(numeroContaOrigem) && contas.containsKey(numeroContaDestino);
+      @ requires contas.get(numeroContaOrigem) != null;
+      @ requires contas.get(numeroContaDestino) != null;
       @   requires !numeroContaOrigem.equals(numeroContaDestino);
       @   requires valor > 0;
+      @ requires contas.get(numeroContaOrigem) != null;
+      @ requires contas.get(numeroContaDestino) != null;
       @   requires contas.get(numeroContaOrigem).getSaldo() >= valor;
       @   assignable \everything;
       @   ensures \result != null;
@@ -158,14 +176,18 @@ public class ContaService {
     }
 
     /*@ private normal_behavior
-      @   requires conta != null && conta.getSaldo() >= valor;
-      @   assignable \nothing;
-      @ also
-      @ private exceptional_behavior
-      @   requires conta != null && conta.getSaldo() < valor;
-      @   assignable \nothing;
-      @   signals_only SaldoInsuficienteException;
-      @*/
+   @   requires conta != null;
+   @   requires valor >= 0;
+   @   requires conta.getSaldo() >= valor;
+   @   assignable \nothing;
+   @ also
+   @ private exceptional_behavior
+   @   requires conta != null;
+   @   requires valor >= 0;
+   @   requires conta.getSaldo() < valor;
+   @   assignable \nothing;
+   @   signals_only SaldoInsuficienteException;
+   @*/
     private /*@ pure @*/ void verificarSaldoSuficiente(Conta conta, double valor) {
         if (conta.getSaldo() < valor) {
             throw new SaldoInsuficienteException(conta.getNumero());
