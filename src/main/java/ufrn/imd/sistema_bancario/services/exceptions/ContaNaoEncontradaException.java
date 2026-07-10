@@ -5,8 +5,11 @@ import ufrn.imd.sistema_bancario.SistemaBancarioBaseException;
 public class ContaNaoEncontradaException extends SistemaBancarioBaseException {
     private final String numeroConta;
 
-    //@ pure
-    public ContaNaoEncontradaException(String numeroConta) {
+    /*@ public normal_behavior
+      @   assignable \nothing;
+      @*/
+    // @ pure
+    public ContaNaoEncontradaException(/*@ nullable @*/ String numeroConta) {
         this.numeroConta = numeroConta;
     }
 

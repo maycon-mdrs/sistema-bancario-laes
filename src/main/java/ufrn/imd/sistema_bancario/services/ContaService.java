@@ -41,20 +41,23 @@ public class ContaService {
 
     /*@ public normal_behavior
       @   requires numeroConta != null && numeroConta.length() > 0;
-      @   requires contas.containsKey(numeroConta);
+      @   requires contas.get(numeroConta) != null;
       @   assignable \nothing;
       @   ensures \result != null;
       @   ensures \result == contas.get(numeroConta);
-      @   ensures contas.get(numeroConta) != null;
       @ also
       @ public exceptional_behavior
-      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
+      @   requires numeroConta == null || numeroConta.length() == 0 || contas.get(numeroConta) == null;
       @   assignable \nothing;
       @   signals_only ContaNaoEncontradaException;
       @*/
     // @ pure
     public Conta buscarConta(String numeroConta) {
-        Conta conta = contas.get(numeroConta);
+        if (numeroConta == null || numeroConta.isEmpty()) {
+            throw new ContaNaoEncontradaException(numeroConta);
+        }
+
+        /*@ nullable @*/ Conta conta = contas.get(numeroConta);
         if (conta == null) {
             throw new ContaNaoEncontradaException(numeroConta);
         }
