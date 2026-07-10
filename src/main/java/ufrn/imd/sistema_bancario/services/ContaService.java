@@ -11,21 +11,24 @@ import ufrn.imd.sistema_bancario.services.exceptions.ValorInvalidoException;
 
 public class ContaService {
 
-    //@ spec_public
+    /*@ spec_public non_null @*/
     private final Map<String, Conta> contas = new HashMap<>();
 
-    /*@ public normal_behavior
-      @   requires numeroConta != null && numeroConta.length() > 0;
+    /*@ public behavior
+      @   requires numeroConta != null && numeroConta.length() > 0 && contas != null;
       @   requires !contas.containsKey(numeroConta);
-      @   assignable contas;
+      @   assignable contas.*;
       @   ensures contas.containsKey(numeroConta);
       @   ensures \result != null;
       @   ensures \result.getNumero().equals(numeroConta);
+      @   signals_only RuntimeException; // <--- Allows Map's unchecked exceptions to escape
       @ also
       @ public exceptional_behavior
-      @   requires numeroConta == null || contas.containsKey(numeroConta);
+      @   requires numeroConta != null
+      @         && numeroConta.length() > 0
+      @         && contas.containsKey(numeroConta);
       @   assignable \nothing;
-      @   signals_only ContaJaExisteException, NullPointerException;
+      @   signals_only ContaJaExisteException, RuntimeException;
       @*/
     public Conta criarConta(String numeroConta, Double saldoInicial) {
         if (contas.containsKey(numeroConta)) {

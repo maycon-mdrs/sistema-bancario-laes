@@ -5,6 +5,9 @@ import ufrn.imd.sistema_bancario.SistemaBancarioBaseException;
 public class ContaJaExisteException extends SistemaBancarioBaseException {
     private final String numeroConta;
 
+    /*@ public normal_behavior
+     @   assignable \nothing;
+     @*/
     //@ pure
     public ContaJaExisteException(String numeroConta) {
         this.numeroConta = numeroConta;

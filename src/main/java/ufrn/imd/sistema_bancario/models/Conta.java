@@ -58,6 +58,12 @@ public class Conta {
         this.saldo -= valor;
     }
 
+    /*@ public normal_behavior
+      @   assignable \nothing;
+      @   ensures \result != null;
+      @   ensures \result.length() > 0;
+      @   ensures \result == numero;
+      @*/
     //@ spec_pure
     public String getNumero() {
         return numero;
