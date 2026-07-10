@@ -10,9 +10,10 @@ public class Conta {
     private double saldo;
 
     //@ public invariant saldo >= 0;
-    //@ public invariant numero != null && numero.length() > 0;
+    //@ public invariant numero != null && numero.length > 0;
 
-    //@ requires numero != null && numero.length() > 0;
+    //@ requires numero != null && !numero.length > 0;
+    //@ assignable numero, saldo;
     //@ ensures this.numero.equals(numero);
     //@ ensures this.saldo == 0;
     public Conta(String numero) {
@@ -47,8 +48,6 @@ public class Conta {
         return numero;
     }
 
-    //@ requires numero != null && numero.length() > 0;
-    //@ assignable this.numero;
     public void setNumero(String numero) {
         this.numero = numero;
     }
@@ -58,8 +57,6 @@ public class Conta {
         return saldo;
     }
 
-    //@ requires saldo >= 0;
-    //@ assignable this.saldo;
     public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
