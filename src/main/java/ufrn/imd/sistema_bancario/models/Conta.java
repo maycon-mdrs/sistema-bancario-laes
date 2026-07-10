@@ -1,5 +1,6 @@
 package ufrn.imd.sistema_bancario.models;
 
+import ufrn.imd.sistema_bancario.services.exceptions.SaldoInsuficienteException;
 import ufrn.imd.sistema_bancario.services.exceptions.ValorInvalidoException;
 
 public class Conta {
@@ -50,10 +51,20 @@ public class Conta {
       @   requires valor <= 0;
       @   assignable \nothing;
       @   signals_only ValorInvalidoException;
+      @ also
+@ public exceptional_behavior
+@   requires valor > 0;
+@   requires this.saldo < valor;
+@   assignable \nothing;
+@   signals_only SaldoInsuficienteException;
       @*/
     public void debitar(double valor) {
         if (valor <= 0) {
             throw new ValorInvalidoException();
+        }
+
+        if (this.saldo < valor) {
+            throw new SaldoInsuficienteException(numero);
         }
         this.saldo -= valor;
     }

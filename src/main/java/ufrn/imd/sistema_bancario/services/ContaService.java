@@ -17,7 +17,7 @@ public class ContaService {
     /*@ public behavior
       @   requires numeroConta != null && numeroConta.length() > 0 && contas != null;
       @   requires !contas.containsKey(numeroConta);
-      @   assignable contas.*;
+      @   assignable \everything;
       @   ensures contas.containsKey(numeroConta);
       @   ensures \result != null;
       @   ensures \result.getNumero().equals(numeroConta);
@@ -54,7 +54,7 @@ public class ContaService {
       @   assignable \nothing;
       @   signals_only ContaNaoEncontradaException;
       @*/
-    // @ pure
+    //@ pure
     public Conta buscarConta(String numeroConta) {
         if (numeroConta == null || numeroConta.isEmpty()) {
             throw new ContaNaoEncontradaException(numeroConta);
@@ -113,7 +113,7 @@ public class ContaService {
 
 
   /*@ public normal_behavior
-  @   requires numeroConta != null;
+@   requires numeroConta != null;
   @   requires numeroConta.length() > 0;
   @   requires valor > 0;
   @   requires contas.containsKey(numeroConta);
@@ -146,6 +146,7 @@ public class ContaService {
   @   requires contas.get(numeroConta).getSaldo() < valor;
   @   assignable \nothing;
   @   signals_only SaldoInsuficienteException;
+
   @*/
     public Conta debitar(String numeroConta, double valor) {
         if (valor <= 0) {
@@ -158,21 +159,24 @@ public class ContaService {
     }
 
     /*@ public normal_behavior
-      @   requires numeroContaOrigem != null && numeroContaDestino != null;
-      @ requires contas.get(numeroContaOrigem) != null;
-      @ requires contas.get(numeroContaDestino) != null;
-      @   requires !numeroContaOrigem.equals(numeroContaDestino);
-      @   requires valor > 0;
-      @ requires contas.get(numeroContaOrigem) != null;
-      @ requires contas.get(numeroContaDestino) != null;
-      @   requires contas.get(numeroContaOrigem).getSaldo() >= valor;
-      @   assignable \everything;
-      @   ensures \result != null;
-      @*/
+          @   requires numeroContaOrigem != null && numeroContaOrigem.length() > 0;
+          @   requires numeroContaDestino != null && numeroContaDestino.length() > 0;
+          @   requires contas.get(numeroContaOrigem) != null;
+          @   requires contas.get(numeroContaDestino) != null;
+          @   requires !numeroContaOrigem.equals(numeroContaDestino);
+          @   requires valor > 0;
+          @   requires contas.get(numeroContaOrigem).getSaldo() >= valor;
+          @   assignable \everything;
+          @   ensures \result != null;
+          @*/
     public Conta transferir(String numeroContaOrigem, String numeroContaDestino, double valor) {
-        this.debitar(numeroContaOrigem, valor);
-        this.creditar(numeroContaDestino, valor);
-        return buscarConta(numeroContaOrigem);
+        Conta contaOrigem = this.buscarConta(numeroContaOrigem);
+        Conta contaDestino = this.buscarConta(numeroContaDestino);
+
+        contaOrigem.debitar(valor);
+        contaDestino.creditar(valor);
+
+        return contaOrigem;
     }
 
     /*@ private normal_behavior

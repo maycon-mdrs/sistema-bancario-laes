@@ -3,6 +3,7 @@ package ufrn.imd.sistema_bancario.services.exceptions;
 import ufrn.imd.sistema_bancario.SistemaBancarioBaseException;
 
 public class ContaNaoEncontradaException extends SistemaBancarioBaseException {
+    /*@ nullable @*/
     private final String numeroConta;
 
     /*@ public normal_behavior
