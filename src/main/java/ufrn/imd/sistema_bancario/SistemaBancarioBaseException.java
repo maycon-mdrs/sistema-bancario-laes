@@ -4,6 +4,9 @@ package ufrn.imd.sistema_bancario;
 
 public abstract class SistemaBancarioBaseException extends RuntimeException {
 
+    /*@ protected normal_behavior
+      @   assignable \nothing;
+      @*/
     //@ pure
     protected SistemaBancarioBaseException() {
         super();

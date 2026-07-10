@@ -4,6 +4,9 @@ import ufrn.imd.sistema_bancario.SistemaBancarioBaseException;
 
 public class ValorInvalidoException extends SistemaBancarioBaseException {
 
+    /*@ public normal_behavior
+      @   assignable \nothing;
+      @*/
     //@ pure
     public ValorInvalidoException() {
         super();

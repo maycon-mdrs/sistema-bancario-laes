@@ -82,7 +82,7 @@ public class ContaService {
 
     /*@ public normal_behavior
       @   requires numeroConta != null && numeroConta.length() > 0;
-      @   requires contas.containsKey(numeroConta);
+      @   requires contas.get(numeroConta) != null;
       @   requires valor > 0;
       @   assignable \everything;
       @   ensures \result != null;
@@ -93,6 +93,7 @@ public class ContaService {
       @   signals_only ValorInvalidoException;
       @ also
       @ public exceptional_behavior
+      @   requires valor > 0;
       @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
       @   assignable \nothing;
       @   signals_only ContaNaoEncontradaException;
