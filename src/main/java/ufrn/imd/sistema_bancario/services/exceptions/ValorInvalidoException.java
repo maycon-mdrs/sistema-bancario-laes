@@ -4,11 +4,21 @@ import ufrn.imd.sistema_bancario.SistemaBancarioBaseException;
 
 public class ValorInvalidoException extends SistemaBancarioBaseException {
 
+    /*@ public normal_behavior
+      @   assignable \nothing;
+      @*/
+    //@ pure
+    public ValorInvalidoException() {
+        super();
+    }
+
+    //@ pure
     @Override
     public String getFriendlyMessage() {
         return "O valor da operação deve ser maior que zero.";
     }
 
+    //@ pure
     @Override
     public String getLogMessage() {
         return "Tentativa de operação com valor inválido.";

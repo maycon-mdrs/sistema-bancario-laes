@@ -3,17 +3,24 @@ package ufrn.imd.sistema_bancario.services.exceptions;
 import ufrn.imd.sistema_bancario.SistemaBancarioBaseException;
 
 public class ContaNaoEncontradaException extends SistemaBancarioBaseException {
+    /*@ nullable @*/
     private final String numeroConta;
 
-    public ContaNaoEncontradaException(String numeroConta) {
+    /*@ public normal_behavior
+      @   assignable \nothing;
+      @*/
+    // @ pure
+    public ContaNaoEncontradaException(/*@ nullable @*/ String numeroConta) {
         this.numeroConta = numeroConta;
     }
 
+    //@ pure
     @Override
     public String getFriendlyMessage() {
         return "Conta com número " + numeroConta + " não foi encontrada.";
     }
 
+    //@ pure
     @Override
     public String getLogMessage() {
         return "ContaNaoEncontradaException: conta " + numeroConta + " não encontrada.";
