@@ -11,17 +11,21 @@ import ufrn.imd.sistema_bancario.services.exceptions.ValorInvalidoException;
 
 public class ContaService {
 
-    /*@ public model \map<String, Conta> mapContas;
-      @ in contas;
-      @*/
+    //@ spec_public
     private final Map<String, Conta> contas = new HashMap<>();
 
     /*@ public normal_behavior
       @   requires numeroConta != null && numeroConta.length() > 0;
-      @   requires !mapContas.has(numeroConta);
-      @   assignable mapContas;
-      @   ensures mapContas.has(numeroConta);
+      @   requires !contas.containsKey(numeroConta);
+      @   assignable contas;
+      @   ensures contas.containsKey(numeroConta);
       @   ensures \result != null;
+      @   ensures \result.getNumero().equals(numeroConta);
+      @ also
+      @ public exceptional_behavior
+      @   requires numeroConta == null || contas.containsKey(numeroConta);
+      @   assignable \nothing;
+      @   signals_only ContaJaExisteException, NullPointerException;
       @*/
     public Conta criarConta(String numeroConta, Double saldoInicial) {
         if (contas.containsKey(numeroConta)) {
@@ -36,11 +40,19 @@ public class ContaService {
     }
 
     /*@ public normal_behavior
-      @   requires numeroConta != null && !numeroConta.isEmpty();
-      @   requires mapContas.has(numeroConta);
+      @   requires numeroConta != null && numeroConta.length() > 0;
+      @   requires contas.containsKey(numeroConta);
       @   assignable \nothing;
       @   ensures \result != null;
+      @   ensures \result == contas.get(numeroConta);
+      @   ensures contas.get(numeroConta) != null;
+      @ also
+      @ public exceptional_behavior
+      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
+      @   assignable \nothing;
+      @   signals_only ContaNaoEncontradaException;
       @*/
+    // @ pure
     public Conta buscarConta(String numeroConta) {
         Conta conta = contas.get(numeroConta);
         if (conta == null) {
@@ -49,22 +61,38 @@ public class ContaService {
         return conta;
     }
 
-    /*@ requires numeroConta != null && numeroConta.length() > 0;
-      @ requires mapContas.has(numeroConta);
-      @ assignable \nothing;
-      @ ensures \result >= 0;
+    /*@ public normal_behavior
+      @   requires numeroConta != null && numeroConta.length() > 0;
+      @   requires contas.containsKey(numeroConta);
+      @   assignable \nothing;
+      @   ensures \result >= 0;
+      @ also
+      @ public exceptional_behavior
+      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
+      @   assignable \nothing;
+      @   signals_only ContaNaoEncontradaException;
       @*/
-    public double consultarSaldo(String numeroConta) {
+    public /*@ pure @*/ double consultarSaldo(String numeroConta) {
         Conta conta = buscarConta(numeroConta);
         return conta.getSaldo();
     }
 
     /*@ public normal_behavior
-      @   requires numeroConta != null && !numeroConta.isEmpty();
-      @   requires mapContas.has(numeroConta);
+      @   requires numeroConta != null && numeroConta.length() > 0;
+      @   requires contas.containsKey(numeroConta);
       @   requires valor > 0;
-      @   assignable \nothing;
+      @   assignable \everything;
       @   ensures \result != null;
+      @ also
+      @ public exceptional_behavior
+      @   requires valor <= 0;
+      @   assignable \nothing;
+      @   signals_only ValorInvalidoException;
+      @ also
+      @ public exceptional_behavior
+      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
+      @   assignable \nothing;
+      @   signals_only ContaNaoEncontradaException;
       @*/
     public Conta creditar(String numeroConta, double valor) {
         if (valor <= 0) {
@@ -77,14 +105,28 @@ public class ContaService {
 
     /*@ public normal_behavior
       @   requires numeroConta != null && numeroConta.length() > 0;
-      @   requires mapContas.has(numeroConta);
+      @   requires contas.containsKey(numeroConta);
       @   requires valor > 0;
-      @   assignable \nothing;
+      @   requires contas.get(numeroConta).getSaldo() >= valor;
+      @   assignable \everything;
       @   ensures \result != null;
       @ also
       @ public exceptional_behavior
       @   requires valor <= 0;
+      @   assignable \nothing;
       @   signals_only ValorInvalidoException;
+      @ also
+      @ public exceptional_behavior
+      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
+      @   assignable \nothing;
+      @   signals_only ContaNaoEncontradaException;
+      @ also
+      @ public exceptional_behavior
+      @   requires contas.containsKey(numeroConta);
+      @   requires valor > 0;
+      @   requires contas.get(numeroConta).getSaldo() < valor;
+      @   assignable \nothing;
+      @   signals_only SaldoInsuficienteException;
       @*/
     public Conta debitar(String numeroConta, double valor) {
         if (valor <= 0) {
@@ -98,9 +140,12 @@ public class ContaService {
 
     /*@ public normal_behavior
       @   requires numeroContaOrigem != null && numeroContaDestino != null;
-      @   requires mapContas.has(numeroContaOrigem) && mapContas.has(numeroContaDestino);
+      @   requires contas.containsKey(numeroContaOrigem) && contas.containsKey(numeroContaDestino);
       @   requires !numeroContaOrigem.equals(numeroContaDestino);
-      @   assignable \nothing;
+      @   requires valor > 0;
+      @   requires contas.get(numeroContaOrigem).getSaldo() >= valor;
+      @   assignable \everything;
+      @   ensures \result != null;
       @*/
     public Conta transferir(String numeroContaOrigem, String numeroContaDestino, double valor) {
         this.debitar(numeroContaOrigem, valor);
@@ -114,9 +159,10 @@ public class ContaService {
       @ also
       @ private exceptional_behavior
       @   requires conta != null && conta.getSaldo() < valor;
+      @   assignable \nothing;
       @   signals_only SaldoInsuficienteException;
       @*/
-    private void verificarSaldoSuficiente(Conta conta, double valor) {
+    private /*@ pure @*/ void verificarSaldoSuficiente(Conta conta, double valor) {
         if (conta.getSaldo() < valor) {
             throw new SaldoInsuficienteException(conta.getNumero());
         }
