@@ -110,31 +110,28 @@ public class ContaService {
         return conta;
     }
 
-    /*@ public normal_behavior
-      @   requires numeroConta != null && numeroConta.length() > 0;
-      @   requires contas.containsKey(numeroConta);
-      @   requires valor > 0;
-      @   requires contas.get(numeroConta).getSaldo() >= valor;
-      @   assignable \everything;
-      @   ensures \result != null;
-      @ also
-      @ public exceptional_behavior
-      @   requires valor <= 0;
-      @   assignable \nothing;
-      @   signals_only ValorInvalidoException;
-      @ also
-      @ public exceptional_behavior
-      @   requires numeroConta == null || numeroConta.length() == 0 || !contas.containsKey(numeroConta);
-      @   assignable \nothing;
-      @   signals_only ContaNaoEncontradaException;
-      @ also
-      @ public exceptional_behavior
-      @   requires contas.containsKey(numeroConta);
-      @   requires valor > 0;
-      @   requires contas.get(numeroConta).getSaldo() < valor;
-      @   assignable \nothing;
-      @   signals_only SaldoInsuficienteException;
-      @*/
+    /*@ public exceptional_behavior
+  @   requires valor <= 0;
+  @   assignable \nothing;
+  @   signals_only ValorInvalidoException;
+  @ also
+  @ public exceptional_behavior
+  @   requires valor > 0;
+  @   requires numeroConta == null
+  @         || numeroConta.length() == 0
+  @         || !contas.containsKey(numeroConta);
+  @   assignable \nothing;
+  @   signals_only ContaNaoEncontradaException;
+  @ also
+  @ public exceptional_behavior
+  @   requires valor > 0;
+  @   requires numeroConta != null;
+  @   requires numeroConta.length() > 0;
+  @   requires contas.containsKey(numeroConta);
+  @   requires contas.get(numeroConta).getSaldo() < valor;
+  @   assignable \nothing;
+  @   signals_only SaldoInsuficienteException;
+  @*/
     public Conta debitar(String numeroConta, double valor) {
         if (valor <= 0) {
             throw new ValorInvalidoException();
