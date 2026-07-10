@@ -1,24 +1,23 @@
 package ufrn.imd.sistema_bancario;
 
-import lombok.Getter;
 
-@Getter
+
 public abstract class SistemaBancarioBaseException extends RuntimeException {
 
+    //@ pure
     protected SistemaBancarioBaseException() {
+        super();
     }
 
+    //@ pure
     protected SistemaBancarioBaseException(Throwable cause) {
         super(cause);
     }
 
+    //@ pure
     public abstract String getFriendlyMessage();
 
+    //@ pure
     public abstract String getLogMessage();
-
-    @Override
-    public String getMessage() {
-        return getFriendlyMessage();
-    }
 
 }
