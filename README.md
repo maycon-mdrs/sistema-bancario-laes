@@ -1,8 +1,8 @@
 # Sistema Bancário
 
-Sistema bancário simples desenvolvido como projeto da disciplina **Lógica Aplicada à Engenharia de Software**, com arquitetura **Model–View–Controller (MVC)** e API REST em Spring Boot.
+Sistema bancário simples desenvolvido como projeto da disciplina **Lógica Aplicada à Engenharia de Software**, com **arquitetura em camadas** e API REST em Spring Boot.
 
-O objetivo do trabalho inclui a especificação formal do comportamento com **Java Modeling Language (JML)** via [OpenJML](https://www.openjml.org) — etapa prevista para as classes de `models/` e `services/`.
+O comportamento das regras de negócio é especificado formalmente com **Java Modeling Language (JML)** via [OpenJML](https://www.openjml.org), aplicada nas camadas de `models/`, `services/` e `services/exceptions/`.
 
 ## Funcionalidades
 
@@ -25,12 +25,15 @@ O objetivo do trabalho inclui a especificação formal do comportamento com **Ja
 
 ## Arquitetura
 
+O sistema expõe apenas uma API REST (sem interface gráfica). Os DTOs definem o contrato JSON de entrada e saída — não constituem uma camada de apresentação no sentido do MVC clássico.
+
 | Camada | Pacote | Responsabilidade |
 |--------|--------|------------------|
-| **Model** | `models/` | Entidade `Conta` com regras de crédito e débito |
-| **View** | `dto/` | DTOs de requisição e resposta da API REST |
-| **Controller** | `controller/` | Recebe requisições HTTP, delega ao Service e retorna respostas |
-| **Service** | `services/` | Orquestra operações, validações e persistência em memória |
+| **Apresentação** | `controller/` | Recebe requisições HTTP, valida entrada (`@Valid`), delega ao Service e retorna respostas |
+| **Contrato da API** | `dto/` | Estruturas de requisição e resposta serializadas em JSON |
+| **Serviço** | `services/` | Orquestra operações, validações de negócio e persistência em memória (`HashMap`) |
+| **Domínio** | `models/` | Entidade `Conta` com regras de crédito, débito e invariantes |
+| **Exceções** | `services/exceptions/` | Falhas de negócio mapeadas para respostas HTTP pelo `SistemaBancarioExceptionHandler` |
 
 ---
 
@@ -64,7 +67,7 @@ mvnw.cmd spring-boot:run     # Windows
 ./mvnw spring-boot:run       # Linux/Mac
 ```
 
-4. Acesse em `http://localhost:8080`
+4. A API fica disponível em `http://localhost:8080`. Use os endpoints abaixo (Postman, curl, etc.) — por exemplo: `GET http://localhost:8080/api/conta/12345/saldo`.
 
 ---
 
@@ -131,6 +134,19 @@ curl -X POST http://localhost:8080/api/conta/12345/transferir/67890 \
 
 ---
 
+## Verificação JML (OpenJML)
+
+Com o [OpenJML](https://www.openjml.org) instalado, é possível validar as especificações:
+
+```bash
+openjml -check src/main/java/ufrn/imd/sistema_bancario/models/Conta.java
+openjml --esc src/main/java/ufrn/imd/sistema_bancario/models/Conta.java
+```
+
+Mais detalhes sobre contratos e limitações da verificação estão em `RELATORIO_IMPLEMENTACAO.md`.
+
+---
+
 ## Docker
 
 ```bash
@@ -145,13 +161,59 @@ docker run -p 8080:8080 sistema-bancario
 
 <table>
     <tr>
-        
+        <td align="center" width="80">
+            <a href="https://github.com/Erigeo">
+                <img src="https://avatars.githubusercontent.com/u/79608648?v=4" width="50" style="border-radius: 50%;"/>
+            </a>
+        </td>
+        <td>
+            <strong>Georg Herison</strong><br/>
+            <a href="https://github.com/Erigeo">Erigeo</a>
+        </td>
     </tr>
     <tr>
-        
+        <td align="center" width="80">
+            <a href="https://github.com/Gaplima">
+                <img src="https://avatars.githubusercontent.com/u/53875638?v=4" width="50" style="border-radius: 50%;"/>
+            </a>
+        </td>
+        <td>
+            <strong>Gabriel Alves Pinheiro Lima</strong><br/>
+            <a href="https://github.com/Gaplima">Gaplima</a>
+        </td>
     </tr>
     <tr>
-        
+        <td align="center" width="80">
+            <a href="https://github.com/MarcosBB">
+                <img src="https://avatars.githubusercontent.com/u/50207805?v=4" width="50" style="border-radius: 50%;"/>
+            </a>
+        </td>
+        <td>
+            <strong>Marcos Beraldo Barros</strong><br/>
+            <a href="https://github.com/MarcosBB">MarcosBB</a>
+        </td>
+    </tr>
+    <tr>
+        <td align="center" width="80">
+            <a href="https://github.com/maycon-mdrs">
+                <img src="https://avatars.githubusercontent.com/u/81583731?v=4" width="50" style="border-radius: 50%;"/>
+            </a>
+        </td>
+        <td>
+            <strong>Maycon Douglas Rêgo Santos</strong><br/>
+            <a href="https://github.com/maycon-mdrs">maycon-mdrs</a>
+        </td>
+    </tr>
+    <tr>
+        <td align="center" width="80">
+            <a href="https://github.com/Vanessa-Maria2">
+                <img src="https://avatars.githubusercontent.com/u/81782508?v=4" width="50" style="border-radius: 50%;"/>
+            </a>
+        </td>
+        <td>
+            <strong>Vanessa Maria</strong><br/>
+            <a href="https://github.com/Vanessa-Maria2">Vanessa-Maria2</a>
+        </td>
     </tr>
 </table>
 
@@ -162,3 +224,4 @@ docker run -p 8080:8080 sistema-bancario
 - Maven
 - Lombok
 - Jakarta Validation
+- OpenJML (verificação formal)
