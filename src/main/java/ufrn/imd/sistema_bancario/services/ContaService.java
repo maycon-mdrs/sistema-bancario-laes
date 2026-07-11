@@ -3,12 +3,15 @@ package ufrn.imd.sistema_bancario.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import ufrn.imd.sistema_bancario.models.Conta;
 import ufrn.imd.sistema_bancario.services.exceptions.ContaJaExisteException;
 import ufrn.imd.sistema_bancario.services.exceptions.ContaNaoEncontradaException;
 import ufrn.imd.sistema_bancario.services.exceptions.SaldoInsuficienteException;
 import ufrn.imd.sistema_bancario.services.exceptions.ValorInvalidoException;
 
+@Service
 public class ContaService {
 
     /*@ spec_public non_null @*/
